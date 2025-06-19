@@ -25,15 +25,18 @@ jobs:
       - name: Run tests
         run: npm test
 
-  deploy:
-    needs: test
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
 
-      - name: Deploy to production
-        run: |
-          echo "Deploying the application..."
-          # Put your deploy script or commands here
+  deploy:
+    name: Deploy to Render
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to Render
+        uses: JorgeLNJunior/render-deploy@v1.4.5
+        with:
+          service_id: ${{ secrets.RENDER_SERVICE_ID }}
+          api_key: ${{ secrets.RENDER_API_KEY }}
+          clear_cache: true # Optional: Clear Render's build cache
+          wait_deploy: true
+          github_deployment: true
+          deployment_environment: 'production'
+          github_token: ${{ secrets.GITHUB_TOKEN }}
